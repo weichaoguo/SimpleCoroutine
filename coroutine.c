@@ -12,7 +12,6 @@
 
 #include <sys/mman.h>
 #include <pthread.h>
-#include <stdio.h>
 
 #define NULL ((void *)0)
 #define STACK_SIZE (8 * 1024 * 1024)  //8 MB -- same as Linux Thread Stack Size
