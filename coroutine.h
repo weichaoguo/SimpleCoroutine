@@ -11,19 +11,55 @@
 #ifndef C_COROUTINE_H
 #define C_COROUTINE_H
 
+#include <ucontext.h>
+
 #define COROUTINE_DEAD 0
 #define COROUTINE_READY 1
 #define COROUTINE_RUNNING 2
 #define COROUTINE_SUSPEND 3
 
-typedef void (*co_func)(void *);
+#define COROUTINE_LOCK 4
+#define COROUTINE_SLEEP 5
 
-int co_create(co_func, void *);
-void co_enter(int id);
-void co_yield();
-void co_destroy(int id);
+struct coroutine;
 
-int co_status(int id);
-int co_running(void);
+typedef void (*co_func)(struct coroutine *, void *);
+
+struct coroutine {
+    int status;
+    co_func func;
+    void *args;
+    ucontext_t ctx;
+    void *stack;
+    struct schedule *sched;
+    pthread_mutex_t *mutex;
+    int countdown;
+    struct coroutine *next;
+};
+
+struct co_queue {
+    struct coroutine *front;
+    struct coroutine *rear;
+};
+
+struct schedule {
+    struct co_queue suspend;
+    struct co_queue lock;
+    struct co_queue sleep;
+    ucontext_t main_ctx;
+};
+
+struct coroutine co_create(co_func, void *);
+void co_enter(struct coroutine *);
+void co_yield(struct coroutine *);
+void co_destroy(struct coroutine *);
+
+void co_schedule(struct schedule *);
+void co_attach(struct schedule *, struct coroutine *);
+
+void co_lock(struct coroutine *, pthread_mutex_t *);
+int co_unlock(struct coroutine *, pthread_mutex_t *);
+
+void co_sleep(struct coroutine *, int);
 
 #endif
