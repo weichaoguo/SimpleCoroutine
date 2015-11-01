@@ -16,13 +16,13 @@ API
 - void __co_attach__ (struct schedule *sched, struct coroutine *co)
   - attaching a coroutine to a schedule
 - void __co_schedule__ (struct schedule *sched)
-  - scheduling lock queue first, for a coroutine, if lock success, enter this coroutine; then scheduling sleep queue, for a coroutine, if the countdown reaches 0, putting the coroutine back to the suspend queue
+  - scheduling a batch of coroutines
 - void __co_lock__ (struct coroutine *co, pthread_mutex_lock *mutex)
-  - putting the coroutine to the lock queue & switch back to main context
+  - getting a pthread mutex lock asynchronously
 - __co_unlock__ (struct coroutine *co, pthread_mutex_lock *mutex)
   - releasing the lock
 - __co_sleep__ (struct coroutine *co, int round)
-  - stopping a coroutine for _round_ schedules. 
+  - sleeping for _round_ schedules. 
 
 Example
 -------
