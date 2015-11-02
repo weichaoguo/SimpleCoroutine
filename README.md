@@ -6,7 +6,7 @@ This is a simple coroutine library implementation in C.
 Introduction
 ------------
 
-The implementation is based on __glibc ucontext__ instead of __setjmp__ for stackfulness although __setjmp__ can provide a better context switch performance. For different platforms, you can try to customize a specfic __ucontext__ implementation for fast _swapcontext_ which is comparative to _setjmp_. SimpleCoroutine is especially suitable for those systems that have huge logical address space like x86_64 platform as there is no need to do _memcpy_ staffs for saving coroutine stack.
+The implementation is based on __glibc ucontext__ instead of __setjmp__ for stackfulness although __setjmp__ can provide a better context switch performance. For different platforms, you can try to customize a specfic __ucontext__ implementation for fast _swapcontext_ which is comparative to _setjmp_ & _longjmp_. SimpleCoroutine is especially suitable for those systems that have huge logical address space like x86_64 platform as there is no need to do _memcpy_ staffs for saving coroutine stack.
 
 API
 ---
@@ -19,9 +19,9 @@ API
   - scheduling a batch of coroutines
 - void __co_lock__ (struct coroutine *co, pthread_mutex_lock *mutex)
   - getting a pthread mutex lock asynchronously
-- __co_unlock__ (struct coroutine *co, pthread_mutex_lock *mutex)
+- void __co_unlock__ (struct coroutine *co, pthread_mutex_lock *mutex)
   - releasing the lock
-- __co_sleep__ (struct coroutine *co, int round)
+- void __co_sleep__ (struct coroutine *co, int round)
   - sleeping for _round_ schedules. 
 
 Example
@@ -83,7 +83,7 @@ __Time Cost of 32768 coroutines under different lock rate and threads (in Second
 | 40%        | 2.238608  | 2.57414   |
 | 45%        | 2.155451  | 2.639133  |
 
-__Time Cost of 32768 coroutines with a 25% lock rate under differnt lock rate and threads (in Seconds)__
+__Time Cost of 32768 coroutines with a 25% lock rate under differnt sleep rate and threads (in Seconds)__
 
 | Sleep Rate | 2 Threads | 4 Threads |
 |------------|-----------|-----------|
